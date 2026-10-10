@@ -5,9 +5,9 @@ spring:
   autoconfigure:
     exclude: []
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/shadow_engineer}
-    username: ${DATABASE_USERNAME:shadow}
-    password: ${DATABASE_PASSWORD:shadow}
+    url: ${DATABASE_JDBC_URL:jdbc:postgresql://${PGHOST:localhost}:${PGPORT:5432}/${PGDATABASE:shadow_engineer}}
+    username: ${DATABASE_USERNAME:${PGUSER:shadow}}
+    password: ${DATABASE_PASSWORD:${PGPASSWORD:shadow}}
     hikari:
       maximum-pool-size: ${DATABASE_POOL_SIZE:10}
   flyway:

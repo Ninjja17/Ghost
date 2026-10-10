@@ -43,7 +43,12 @@ The PostgreSQL profile runs Flyway migrations from `src/main/resources/db/migrat
 | --- | --- | --- |
 | `PORT` | `8080` | HTTP port |
 | `FRONTEND_ORIGIN` | `http://localhost:5173` | Allowed browser origin |
-| `DATABASE_URL` | local PostgreSQL URL | JDBC connection |
+| `DATABASE_JDBC_URL` | generated from local PostgreSQL variables | JDBC connection |
+| `PGHOST` | `localhost` | PostgreSQL host |
+| `PGPORT` | `5432` | PostgreSQL port |
+| `PGDATABASE` | `shadow_engineer` | PostgreSQL database |
+| `PGUSER` | `shadow` | PostgreSQL user |
+| `PGPASSWORD` | `shadow` | PostgreSQL password |
 | `DATABASE_USERNAME` | `shadow` | Database user |
 | `DATABASE_PASSWORD` | `shadow` | Database password |
 | `AUTH_COOKIE_SECURE` | `false` | Set `true` when serving over HTTPS |
