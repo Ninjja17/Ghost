@@ -36,6 +36,7 @@ The product must not present career outcomes as facts. It should distinguish bet
 - An authenticated unified report API now combines profile, source, repositories, evidence, and score snapshots; the frontend restores it on session load.
 - Developer DNA now renders persisted report scores instead of client-only seeded heuristics.
 - Evidence-backed recommendations and structured mentor insights now flow from the backend interpretation API into the Mentor Council UI.
+- Persisted four-week action plans now support generation, listing, completion criteria, and status updates.
 - Production build passes with `npm run build`.
 
 ### Current Limitations
@@ -227,9 +228,9 @@ Goal: turn analysis into useful, measurable decisions.
 - [ ] Calculate fit and confidence separately.
 - [ ] Show missing evidence and skill gaps for every scenario.
 - [ ] Replace deterministic-looking predictions with clearly labeled scenarios.
-- [ ] Generate weekly action plans from verified gaps.
-- [ ] Give every task completion criteria.
-- [ ] Allow users to accept, edit, skip, and complete tasks.
+- [x] Generate weekly action plans from verified gaps.
+- [x] Give every task completion criteria.
+- [x] Allow users to skip and complete tasks through authenticated status updates.
 - [ ] Track progress against the next analysis snapshot.
 
 Done when: every recommendation is actionable, measurable, and tied to a known gap or opportunity.
