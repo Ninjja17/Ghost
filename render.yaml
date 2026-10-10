@@ -8,7 +8,7 @@ services:
     healthCheckPath: /api/v1/health
     envVars:
       - key: FRONTEND_ORIGIN
-        value: https://ghost-steel.vercel.app
+        value: https://ghost-l34h2nlf8-ninjja17s-projects.vercel.app,https://ghost-steel.vercel.app
       - key: AUTH_COOKIE_SECURE
         value: "true"
       - key: AUTH_COOKIE_SAME_SITE

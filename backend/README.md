@@ -59,7 +59,7 @@ The repository includes `render.yaml` and `backend/Dockerfile` for the API.
 3. In Vercel, add `VITE_API_URL=https://shadow-engineer-api.onrender.com/api/v1` for Production.
 4. Redeploy the Vercel frontend.
 
-The API must allow the exact Vercel origin through `FRONTEND_ORIGIN`. For cross-site production cookies, use `AUTH_COOKIE_SECURE=true` and `AUTH_COOKIE_SAME_SITE=None`.
+The API must allow the exact Vercel origin through `FRONTEND_ORIGIN`. Current frontend origins include `https://ghost-l34h2nlf8-ninjja17s-projects.vercel.app` and `https://ghost-steel.vercel.app`. For cross-site production cookies, use `AUTH_COOKIE_SECURE=true` and `AUTH_COOKIE_SAME_SITE=None`.
 
 ## Authentication
 
