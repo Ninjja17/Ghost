@@ -1,0 +1,15 @@
+spring:
+  config:
+    activate:
+      on-profile: postgres
+  autoconfigure:
+    exclude: []
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/shadow_engineer}
+    username: ${DATABASE_USERNAME:shadow}
+    password: ${DATABASE_PASSWORD:shadow}
+    hikari:
+      maximum-pool-size: ${DATABASE_POOL_SIZE:10}
+  flyway:
+    enabled: true
+    locations: classpath:db/migration

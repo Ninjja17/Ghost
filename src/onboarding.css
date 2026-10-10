@@ -1,0 +1,48 @@
+@media (max-width: 760px) {
+  .onboarding-shell {
+    display: block;
+  }
+
+  .onboarding-aside {
+    min-height: 270px;
+    padding: 22px 24px;
+  }
+
+  .onboarding-manifesto {
+    margin: 55px 0 30px;
+  }
+
+  .onboarding-manifesto h1 {
+    font-size: 44px;
+    margin: 15px 0;
+  }
+
+  .onboarding-manifesto p {
+    font-size: 11px;
+  }
+
+  .onboarding-aside-footer {
+    display: none;
+  }
+
+  .onboarding-form-wrap {
+    padding: 34px 24px 45px;
+  }
+
+  .form-progress {
+    margin-bottom: 42px;
+  }
+
+  .onboarding-form h2 {
+    font-size: 34px;
+  }
+
+  .choice-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 7px;
+  }
+
+  .choice {
+    padding: 11px 5px;
+  }
+}
