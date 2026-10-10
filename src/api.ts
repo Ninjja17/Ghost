@@ -22,6 +22,12 @@ export type ReportResponse = {
   scores: { builderScore: number; finisherScore: number; learnerScore: number; architectScore: number; collaboratorScore: number; formulaVersion: string; observedAt: string } | null
 }
 
+export type InterpretationResponse = {
+  interpretationVersion: string
+  recommendations: Array<{ category: string; title: string; action: string; rationale: string; confidence: number; evidenceIds: string[] }>
+  mentors: Array<{ mentorType: string; lens: string; finding: string; recommendation: string; question: string; confidence: number; uncertainty: string; evidenceIds: string[] }>
+}
+
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080/api/v1'
 
 async function request<T>(path: string, options: RequestInit = {}, token?: string): Promise<T> {
@@ -55,4 +61,8 @@ export function getCurrentProfile() {
 
 export function getReport() {
   return request<ReportResponse>('/report')
+}
+
+export function getInterpretation() {
+  return request<InterpretationResponse>('/report/interpretation')
 }

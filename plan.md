@@ -35,6 +35,7 @@ The product must not present career outcomes as facts. It should distinguish bet
 - Deterministic Developer DNA score snapshots now derive from persisted evidence with passing formula tests.
 - An authenticated unified report API now combines profile, source, repositories, evidence, and score snapshots; the frontend restores it on session load.
 - Developer DNA now renders persisted report scores instead of client-only seeded heuristics.
+- Evidence-backed recommendations and structured mentor insights now flow from the backend interpretation API into the Mentor Council UI.
 - Production build passes with `npm run build`.
 
 ### Current Limitations
@@ -205,9 +206,11 @@ Goal: use Gemini to explain evidence, not invent facts.
 - [ ] Generate a report narrative grounded in evidence IDs.
 - [x] Add an authenticated report API combining persisted profile, source, repositories, evidence, and scores.
 - [ ] Generate gap explanations and recommendations.
+- [x] Generate deterministic evidence-backed recommendations with confidence and evidence IDs.
 - [x] Define four mentor lenses: Engineer, Architect, Recruiter, and Product.
 - [x] Add a deterministic frontend Mentor Council prototype with evidence, recommendations, questions, and synthesis.
 - [ ] Add mentor perspectives only after the single synthesis report is reliable.
+- [x] Add structured deterministic mentor perspectives with evidence IDs and uncertainty.
 - [ ] Enforce that every claim includes supporting evidence or an explicit uncertainty label.
 - [ ] Add prompt versioning.
 - [ ] Store model, prompt version, timestamp, and output status.

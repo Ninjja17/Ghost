@@ -24,7 +24,7 @@ import {
 } from '@phosphor-icons/react'
 import { fetchGitHubSnapshot, type GitHubSnapshot } from './github'
 import { runMentorCouncil, type MentorAgent, type MentorCouncil } from './mentors'
-import { getCurrentProfile, getReport, registerProfile, type ReportResponse } from './api'
+import { getCurrentProfile, getInterpretation, getReport, registerProfile, type InterpretationResponse, type ReportResponse } from './api'
 
 type View = 'overview' | 'evidence' | 'trajectory' | 'mentors'
 
@@ -103,7 +103,7 @@ function App() {
   const [githubSnapshot, setGithubSnapshot] = useState<GitHubSnapshot | null>(null)
   const [reportScores, setReportScores] = useState<ReportResponse['scores']>(null)
   const [notice, setNotice] = useState('')
-  const mentorCouncil = runMentorCouncil()
+  const [mentorCouncil, setMentorCouncil] = useState<MentorCouncil>(() => runMentorCouncil())
 
   useEffect(() => {
     getCurrentProfile()
@@ -113,7 +113,10 @@ function App() {
       })
       .then((report) => {
         setReportScores(report.scores)
-        if (report.source) setGithubSnapshot(toGitHubSnapshot(report))
+        if (report.source) {
+          setGithubSnapshot(toGitHubSnapshot(report))
+          if (report.scores) return getInterpretation().then((interpretation) => setMentorCouncil(toMentorCouncil(interpretation)))
+        }
       })
       .catch(() => setProfile(null))
       .finally(() => setRestoringSession(false))
@@ -141,6 +144,8 @@ function App() {
       setGithubSnapshot(snapshot)
       const report = await getReport()
       setReportScores(report.scores)
+      const interpretation = await getInterpretation()
+      setMentorCouncil(toMentorCouncil(interpretation))
       setSourceOpen(false)
     } catch (error) {
       setSourceError(error instanceof Error ? error.message : 'GitHub could not be connected.')
@@ -295,6 +300,28 @@ function toGitHubSnapshot(report: ReportResponse): GitHubSnapshot {
     stars,
     activeRepositories,
     observedAt: report.source?.lastSyncedAt ?? new Date().toISOString(),
+  }
+}
+
+function toMentorCouncil(response: InterpretationResponse): MentorCouncil {
+  const colors = ['#8dc7ff', '#c0a7ff', '#e3f46b', '#ff8a65']
+  const names = ['Engineer mentor', 'Architect mentor', 'Recruiter mentor', 'Product mentor']
+  const agents = response.mentors.map((mentor, index) => ({
+    type: mentor.mentorType as MentorAgent['type'],
+    name: names[index] ?? mentor.mentorType,
+    role: `${mentor.mentorType} mentor`,
+    lens: mentor.lens,
+    color: colors[index] ?? '#8dc7ff',
+    score: mentor.confidence,
+    finding: mentor.finding,
+    evidence: mentor.evidenceIds.map((id) => `Evidence record ${id.slice(0, 8)}`),
+    recommendation: mentor.recommendation,
+    question: `${mentor.question} ${mentor.uncertainty}`,
+  }))
+  return {
+    agents,
+    synthesis: response.recommendations.map((recommendation) => recommendation.rationale).join(' '),
+    nextMove: response.recommendations[0]?.action ?? 'Collect more evidence before choosing a next move.',
   }
 }
 
