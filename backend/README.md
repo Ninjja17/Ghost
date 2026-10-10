@@ -71,13 +71,3 @@ The API must allow the exact Vercel origin through `FRONTEND_ORIGIN`. Current fr
 Registration and login set an `HttpOnly`, `SameSite=Lax` cookie named `shadow_engineer_session`.
 The frontend must send requests with credentials enabled. Raw session tokens are not returned in JSON.
 
-## Railway Configuration
-
-Set the Railway service root directory to `backend`. The included `railway.toml` then runs:
-
-```bash
-mvn -B clean package -DskipTests
-java -jar target/shadow-engineer-api-0.1.0-SNAPSHOT.jar
-```
-
-Do not set the service root to the repository root while using the `target/...` start path. The JAR is created under `backend/target`.
