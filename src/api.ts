@@ -30,12 +30,19 @@ export type InterpretationResponse = {
 
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080/api/v1'
 
+function apiUrl(path: string) {
+  if (!import.meta.env.DEV && !import.meta.env.VITE_API_URL) {
+    throw new Error('The deployed app is missing VITE_API_URL. Configure it in Vercel to point to the Spring Boot API.')
+  }
+  return `${API_BASE_URL}${path}`
+}
+
 async function request<T>(path: string, options: RequestInit = {}, token?: string): Promise<T> {
   const headers = new Headers(options.headers)
   headers.set('Content-Type', 'application/json')
   if (token) headers.set('Authorization', `Bearer ${token}`)
 
-  const response = await fetch(`${API_BASE_URL}${path}`, { ...options, headers, credentials: 'include' })
+  const response = await fetch(apiUrl(path), { ...options, headers, credentials: 'include' })
   const body = await response.json().catch(() => null) as { message?: string } | null
   if (!response.ok) throw new Error(body?.message ?? 'The API request could not be completed.')
   return body as T

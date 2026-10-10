@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: shadow-engineer-api
+    runtime: docker
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: FRONTEND_ORIGIN
+        value: https://ghost-steel.vercel.app
+      - key: AUTH_COOKIE_SECURE
+        value: "true"
+      - key: AUTH_COOKIE_SAME_SITE
+        value: None
+      - key: APP_VERSION
+        value: 0.1.0

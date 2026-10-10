@@ -50,6 +50,17 @@ The PostgreSQL profile runs Flyway migrations from `src/main/resources/db/migrat
 
 Do not commit credentials or local environment files.
 
+## Deploy With Render
+
+The repository includes `render.yaml` and `backend/Dockerfile` for the API.
+
+1. Create a Render Web Service from this repository using the Blueprint configuration.
+2. Copy the deployed API URL, for example `https://shadow-engineer-api.onrender.com`.
+3. In Vercel, add `VITE_API_URL=https://shadow-engineer-api.onrender.com/api/v1` for Production.
+4. Redeploy the Vercel frontend.
+
+The API must allow the exact Vercel origin through `FRONTEND_ORIGIN`. For cross-site production cookies, use `AUTH_COOKIE_SECURE=true` and `AUTH_COOKIE_SAME_SITE=None`.
+
 ## Authentication
 
 Registration and login set an `HttpOnly`, `SameSite=Lax` cookie named `shadow_engineer_session`.

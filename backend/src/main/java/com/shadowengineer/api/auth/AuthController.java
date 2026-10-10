@@ -25,11 +25,14 @@ public class AuthController {
 
     private final AuthService authService;
     private final boolean secureCookie;
+    private final String sameSite;
 
     public AuthController(AuthService authService,
-                          @Value("${app.auth-cookie-secure:false}") boolean secureCookie) {
+                          @Value("${app.auth-cookie-secure:false}") boolean secureCookie,
+                          @Value("${app.auth-cookie-same-site:Lax}") String sameSite) {
         this.authService = authService;
         this.secureCookie = secureCookie;
+        this.sameSite = sameSite;
     }
 
     @PostMapping("/register")
@@ -60,7 +63,7 @@ public class AuthController {
         ResponseCookie cookie = ResponseCookie.from("shadow_engineer_session", "")
                 .httpOnly(true)
                 .secure(secureCookie)
-                .sameSite("Lax")
+                .sameSite(sameSite)
                 .path("/api")
                 .maxAge(0)
                 .build();
@@ -81,7 +84,7 @@ public class AuthController {
         ResponseCookie cookie = ResponseCookie.from("shadow_engineer_session", token)
                 .httpOnly(true)
                 .secure(secureCookie)
-                .sameSite("Lax")
+                .sameSite(sameSite)
                 .path("/api")
                 .maxAge(java.time.Duration.between(OffsetDateTime.now(), expiresAt))
                 .build();
