@@ -32,6 +32,7 @@ The product must not present career outcomes as facts. It should distinguish bet
 - GitHub connections are now authenticated and user-owned with persisted GitHub account IDs, lookup, and disconnect endpoints.
 - GitHub repository snapshot persistence is implemented with in-memory and PostgreSQL adapters; live ingestion verification is currently rate-limit blocked by GitHub.
 - A versioned evidence record schema and deterministic GitHub snapshot extractor now exist with a passing unit test.
+- Deterministic Developer DNA score snapshots now derive from persisted evidence with passing formula tests.
 - Production build passes with `npm run build`.
 
 ### Current Limitations
@@ -181,8 +182,10 @@ Goal: calculate transparent metrics before involving AI interpretation.
 - [ ] Define skill categories and aliases.
 - [ ] Calculate skill scores using deterministic rules.
 - [ ] Calculate confidence separately from skill strength.
-- [ ] Calculate Builder, Finisher, Learner, Architect, and Collaborator scores.
+- [x] Calculate Builder, Finisher, Learner, Architect, and Collaborator scores.
 - [x] Prototype GitHub-derived Developer DNA heuristics for the dashboard.
+- [x] Calculate and persist versioned score snapshots from evidence records.
+- [x] Add deterministic score formula test coverage.
 - [ ] Store score formulas and version numbers.
 - [ ] Add time-windowed snapshots for progress tracking.
 - [ ] Add score explanations and contributing evidence IDs.

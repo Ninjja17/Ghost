@@ -8,6 +8,7 @@ import java.util.List;
 import com.shadowengineer.api.auth.AuthTokenFilter;
 import com.shadowengineer.api.auth.InvalidCredentialsException;
 import com.shadowengineer.api.evidence.EvidenceExtractionService;
+import com.shadowengineer.api.analysis.ScoringService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,15 +28,18 @@ public class GitHubPreviewController {
     private final GitHubConnectionRepository connectionRepository;
     private final GitHubRepositoryRecordRepository repositoryRecordRepository;
     private final EvidenceExtractionService evidenceExtractionService;
+    private final ScoringService scoringService;
 
     public GitHubPreviewController(GitHubPreviewService service,
                                    GitHubConnectionRepository connectionRepository,
                                    GitHubRepositoryRecordRepository repositoryRecordRepository,
-                                   EvidenceExtractionService evidenceExtractionService) {
+                                   EvidenceExtractionService evidenceExtractionService,
+                                   ScoringService scoringService) {
         this.service = service;
         this.connectionRepository = connectionRepository;
         this.repositoryRecordRepository = repositoryRecordRepository;
         this.evidenceExtractionService = evidenceExtractionService;
+        this.scoringService = scoringService;
     }
 
     @GetMapping("/preview")
@@ -57,6 +61,7 @@ public class GitHubPreviewController {
                 repository.size(), repository.fork(), repository.updatedAt(), snapshot.observedAt()))
             .toList());
         evidenceExtractionService.rebuild(connection);
+        scoringService.rebuild(userId, connection.id());
         return snapshot;
     }
 
