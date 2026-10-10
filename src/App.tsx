@@ -52,14 +52,6 @@ type DnaScore = {
   color: string
 }
 
-const fallbackDnaScores: DnaScore[] = [
-  { label: 'Builder', value: 92, note: 'Ships new ideas often', color: '#e3f46b' },
-  { label: 'Finisher', value: 34, note: 'The growth edge', color: '#ff8a65' },
-  { label: 'Learner', value: 89, note: 'Explores with intent', color: '#8dc7ff' },
-  { label: 'Architect', value: 60, note: 'Growing systems sense', color: '#c0a7ff' },
-  { label: 'Collaborator', value: 28, note: 'Mostly solo work', color: '#f7be5b' },
-]
-
 const evidence: Evidence[] = [
   { label: 'Java + Spring Boot', source: '3 repositories', detail: 'REST APIs, service layers, dependency injection', confidence: 96, color: '#e3f46b' },
   { label: 'React + TypeScript', source: '2 repositories', detail: 'Component systems, typed client state, Vite', confidence: 91, color: '#8dc7ff' },
@@ -88,6 +80,16 @@ function buildDnaScores(snapshot: GitHubSnapshot): DnaScore[] {
   ]
 }
 
+function buildPersistedDnaScores(scores: NonNullable<ReportResponse['scores']>): DnaScore[] {
+  return [
+    { label: 'Builder', value: scores.builderScore, note: 'Persisted evidence score', color: '#e3f46b' },
+    { label: 'Finisher', value: scores.finisherScore, note: 'Persisted evidence score', color: '#ff8a65' },
+    { label: 'Learner', value: scores.learnerScore, note: 'Persisted evidence score', color: '#8dc7ff' },
+    { label: 'Architect', value: scores.architectScore, note: 'Persisted evidence score', color: '#c0a7ff' },
+    { label: 'Collaborator', value: scores.collaboratorScore, note: 'Needs pull request data', color: '#f7be5b' },
+  ]
+}
+
 function App() {
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [restoringSession, setRestoringSession] = useState(true)
@@ -99,6 +101,7 @@ function App() {
   const [sourceLoading, setSourceLoading] = useState(false)
   const [sourceError, setSourceError] = useState('')
   const [githubSnapshot, setGithubSnapshot] = useState<GitHubSnapshot | null>(null)
+  const [reportScores, setReportScores] = useState<ReportResponse['scores']>(null)
   const [notice, setNotice] = useState('')
   const mentorCouncil = runMentorCouncil()
 
@@ -109,6 +112,7 @@ function App() {
         return getReport()
       })
       .then((report) => {
+        setReportScores(report.scores)
         if (report.source) setGithubSnapshot(toGitHubSnapshot(report))
       })
       .catch(() => setProfile(null))
@@ -135,6 +139,8 @@ function App() {
     try {
       const snapshot = await fetchGitHubSnapshot(username)
       setGithubSnapshot(snapshot)
+      const report = await getReport()
+      setReportScores(report.scores)
       setSourceOpen(false)
     } catch (error) {
       setSourceError(error instanceof Error ? error.message : 'GitHub could not be connected.')
@@ -236,7 +242,7 @@ function App() {
           {showEvidence && <div className="evidence-popover"><strong>Signal coverage</strong><span>GitHub public activity <b>96%</b></span><span>Resume skills <b>74%</b></span><span>Project outcomes <b className="warn">41%</b></span><button onClick={() => setShowEvidence(false)} aria-label="Close"><X size={14} /></button></div>}
 
           {!githubSnapshot && <SourceRequiredView onConnect={() => setSourceOpen(true)} />}
-          {githubSnapshot && activeView === 'overview' && <Overview onOpenMission={() => setMissionOpen(true)} onOpenEvidence={() => setActiveView('evidence')} githubSnapshot={githubSnapshot} />}
+          {githubSnapshot && activeView === 'overview' && <Overview onOpenMission={() => setMissionOpen(true)} onOpenEvidence={() => setActiveView('evidence')} githubSnapshot={githubSnapshot} reportScores={reportScores} />}
           {githubSnapshot && activeView === 'evidence' && <EvidenceView githubSnapshot={githubSnapshot} />}
           {githubSnapshot && activeView === 'trajectory' && <TrajectoryView />}
           {githubSnapshot && activeView === 'mentors' && <MentorView council={mentorCouncil} onOpenMission={() => setMissionOpen(true)} />}
@@ -321,8 +327,8 @@ function Onboarding({ onComplete }: { onComplete: (profile: Omit<UserProfile, 'i
   return <main className="onboarding-shell"><div className="onboarding-aside"><div className="brand-lockup"><div className="brand-mark"><span /></div><span>shadow<span className="brand-accent">/</span>engineer</span></div><div className="onboarding-manifesto"><span className="section-index">A PERSONAL READ ON YOUR WORK</span><h1>Know what you are <em>becoming.</em></h1><p>Start with a little context. We will use it to read your work against the direction you actually want.</p></div><div className="onboarding-aside-footer"><span>01 / PROFILE</span><span>Private by default</span></div></div><section className="onboarding-form-wrap"><div className="onboarding-form"><div className="form-progress"><span className="active" /><span /><span /></div><div className="eyebrow"><span className="live-pulse" /> FIRST, A LITTLE CONTEXT</div><h2>What are you<br /><em>building toward?</em></h2><p className="form-intro">This is not a test. It gives the report a direction to measure against.</p><label htmlFor="profile-name">Your name</label><input id="profile-name" value={name} onChange={(event) => setName(event.target.value)} placeholder="e.g. Shibani Rao" autoFocus /><label htmlFor="profile-email">Email</label><input id="profile-email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" /><label htmlFor="profile-password">Password</label><input id="profile-password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="At least 8 characters" /><label>Experience level</label><div className="choice-row">{['Student', '0-1 years', '1-2 years', '3+ years'].map((option) => <button type="button" className={experience === option ? 'choice active' : 'choice'} key={option} onClick={() => setExperience(option)}>{option}</button>)}</div><label htmlFor="target-role">Target role</label><input id="target-role" value={targetRole} onChange={(event) => setTargetRole(event.target.value)} placeholder="e.g. Backend Engineer" /><label htmlFor="profile-goal">What do you want to get better at? <span>Optional</span></label><textarea id="profile-goal" value={goal} onChange={(event) => setGoal(event.target.value)} placeholder="e.g. Ship production-ready systems" rows={3} />{error && <p className="form-error">{error}</p>}<button className="dark-button onboarding-submit" onClick={submit} disabled={submitting}>{submitting ? <><CircleNotch className="spin" size={16} /> Creating workspace</> : <>Create my report <ArrowUpRight size={16} /></>}</button><p className="form-footnote"><LockKey size={13} /> Your profile is stored in Shadow Engineer.</p></div></section></main>
 }
 
-function Overview({ onOpenMission, onOpenEvidence, githubSnapshot }: { onOpenMission: () => void; onOpenEvidence: () => void; githubSnapshot: GitHubSnapshot }) {
-  const currentDnaScores = githubSnapshot ? buildDnaScores(githubSnapshot) : fallbackDnaScores
+function Overview({ onOpenMission, onOpenEvidence, githubSnapshot, reportScores }: { onOpenMission: () => void; onOpenEvidence: () => void; githubSnapshot: GitHubSnapshot; reportScores: ReportResponse['scores'] }) {
+  const currentDnaScores = reportScores ? buildPersistedDnaScores(reportScores) : buildDnaScores(githubSnapshot)
   return <>
     <section className="identity-grid">
       <div className="identity-panel panel-dark">

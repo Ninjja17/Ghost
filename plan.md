@@ -34,6 +34,7 @@ The product must not present career outcomes as facts. It should distinguish bet
 - A versioned evidence record schema and deterministic GitHub snapshot extractor now exist with a passing unit test.
 - Deterministic Developer DNA score snapshots now derive from persisted evidence with passing formula tests.
 - An authenticated unified report API now combines profile, source, repositories, evidence, and score snapshots; the frontend restores it on session load.
+- Developer DNA now renders persisted report scores instead of client-only seeded heuristics.
 - Production build passes with `npm run build`.
 
 ### Current Limitations
