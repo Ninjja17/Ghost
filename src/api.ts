@@ -14,6 +14,14 @@ export type AuthResponse = {
   profile: ApiProfile
 }
 
+export type ReportResponse = {
+  profile: ApiProfile
+  source: { id: string; userId: string; githubUserId: number; githubUsername: string; connectedAt: string; lastSyncedAt: string } | null
+  repositories: Array<{ id: string; connectionId: string; githubRepositoryId: string; name: string; htmlUrl: string; language: string | null; stars: number; forks: number; size: number; fork: boolean; updatedAt: string | null; observedAt: string }>
+  evidence: Array<{ evidenceType: string; claim: string; value: string; confidence: number; observedAt: string }>
+  scores: { builderScore: number; finisherScore: number; learnerScore: number; architectScore: number; collaboratorScore: number; formulaVersion: string; observedAt: string } | null
+}
+
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080/api/v1'
 
 async function request<T>(path: string, options: RequestInit = {}, token?: string): Promise<T> {
@@ -43,4 +51,8 @@ export function registerProfile(input: {
 
 export function getCurrentProfile() {
   return request<ApiProfile>('/auth/me')
+}
+
+export function getReport() {
+  return request<ReportResponse>('/report')
 }

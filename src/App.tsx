@@ -24,7 +24,7 @@ import {
 } from '@phosphor-icons/react'
 import { fetchGitHubSnapshot, type GitHubSnapshot } from './github'
 import { runMentorCouncil, type MentorAgent, type MentorCouncil } from './mentors'
-import { getCurrentProfile, registerProfile } from './api'
+import { getCurrentProfile, getReport, registerProfile, type ReportResponse } from './api'
 
 type View = 'overview' | 'evidence' | 'trajectory' | 'mentors'
 
@@ -104,7 +104,13 @@ function App() {
 
   useEffect(() => {
     getCurrentProfile()
-      .then((apiProfile) => setProfile(toUserProfile(apiProfile)))
+      .then((apiProfile) => {
+        setProfile(toUserProfile(apiProfile))
+        return getReport()
+      })
+      .then((report) => {
+        if (report.source) setGithubSnapshot(toGitHubSnapshot(report))
+      })
       .catch(() => setProfile(null))
       .finally(() => setRestoringSession(false))
   }, [])
@@ -254,6 +260,35 @@ function toUserProfile(profile: { id: string; email: string | null; name: string
     targetRole: profile.targetRole ?? 'Engineer',
     experience: profile.experienceLevel ?? '1-2 years',
     goal: profile.growthGoal ?? '',
+  }
+}
+
+function toGitHubSnapshot(report: ReportResponse): GitHubSnapshot {
+  const languages = report.evidence
+    .filter((record) => record.evidenceType === 'language_signal')
+    .map((record) => {
+      const [name, countText] = record.value.split(':')
+      return { name, count: Number(countText), percentage: 0 }
+    })
+  const stars = Number(report.evidence.find((record) => record.evidenceType === 'public_reach')?.value ?? 0)
+  const activeRepositories = Number(report.evidence.find((record) => record.evidenceType === 'active_project_count')?.value ?? 0)
+  return {
+    profile: {
+      login: report.source?.githubUsername ?? '',
+      name: report.profile.name,
+      avatarUrl: '',
+      publicRepos: report.repositories.length,
+      followers: 0,
+      htmlUrl: `https://github.com/${report.source?.githubUsername ?? ''}`,
+    },
+    repositories: report.repositories.map((repository) => ({
+      ...repository,
+      updatedAt: repository.updatedAt ?? report.source?.lastSyncedAt ?? new Date().toISOString(),
+    })),
+    languages,
+    stars,
+    activeRepositories,
+    observedAt: report.source?.lastSyncedAt ?? new Date().toISOString(),
   }
 }
 

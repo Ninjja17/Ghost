@@ -33,6 +33,7 @@ The product must not present career outcomes as facts. It should distinguish bet
 - GitHub repository snapshot persistence is implemented with in-memory and PostgreSQL adapters; live ingestion verification is currently rate-limit blocked by GitHub.
 - A versioned evidence record schema and deterministic GitHub snapshot extractor now exist with a passing unit test.
 - Deterministic Developer DNA score snapshots now derive from persisted evidence with passing formula tests.
+- An authenticated unified report API now combines profile, source, repositories, evidence, and score snapshots; the frontend restores it on session load.
 - Production build passes with `npm run build`.
 
 ### Current Limitations
@@ -201,6 +202,7 @@ Goal: use Gemini to explain evidence, not invent facts.
 - [ ] Define strict JSON response schemas.
 - [ ] Send only summarized evidence and relevant score inputs to the model.
 - [ ] Generate a report narrative grounded in evidence IDs.
+- [x] Add an authenticated report API combining persisted profile, source, repositories, evidence, and scores.
 - [ ] Generate gap explanations and recommendations.
 - [x] Define four mentor lenses: Engineer, Architect, Recruiter, and Product.
 - [x] Add a deterministic frontend Mentor Council prototype with evidence, recommendations, questions, and synthesis.
